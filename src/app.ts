@@ -1,0 +1,42 @@
+import express, { Request, Response } from "express"
+import envConfig from "./Configs/config";
+import userRouter from "./Modules/Users/user.routes";
+import { createDatabase } from "./Configs/dbconfig";
+import Authrouter from "./Modules/Auth/auth.routes";
+import VehicleRouter from "./Modules/Vehicles/vehicle.routes";
+
+const app = express();
+app.use(express.json());
+
+
+
+
+app.get('/', (req:Request , res:Response)=>{
+    res.send({
+        message: "Welcome to Priyo Car.\n A Most Trusted and authorized car renter webstore in Bangladesh."
+    })
+} )
+
+
+
+createDatabase();
+
+
+app.use('/api/v1/auth/signup', userRouter); // user registration
+app.use("/api/v1/auth/signin", Authrouter) // user login
+
+//Vehicles routes-------------------------->
+app.use("/api/v1/vehicles", VehicleRouter); //post a vehicle
+app.use("/api/v1/vehicles", VehicleRouter) //get all vehicles
+app.use("/api/v1/vehicles", VehicleRouter) //Get a single vehicle
+app.use("/api/v1/vehicles", VehicleRouter)
+
+
+//users routes
+app.use("/api/v1/users", userRouter) //get all users
+app.use("/api/v1/users", userRouter) //update a user
+app.use("/api/v1/users/:userId", userRouter)
+
+
+
+export default app;
