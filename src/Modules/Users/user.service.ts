@@ -10,8 +10,10 @@ const postUser = async(userData:IUserData)=>{
     const result = await pool.query(`
         INSERT INTO Users(name , email , password ,phone, role) VALUES($1 , $2 , $3 , $4, $5) RETURNING *
         `, [name , email , encryptedPass , phone , role])
-        return result;
+        return result.rows[0];
 }
+
+
 const getAllUsers = async()=>{
     const usersdata = await pool.query(`
         SELECT * FROM Users `)

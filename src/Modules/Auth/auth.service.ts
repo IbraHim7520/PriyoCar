@@ -13,10 +13,8 @@ const getLoggedinUser = async(email:string , password:string)=>{
         return null;
     }
     
-    const UserToken = jwt.sign({name:currentUser.name , email}, envConfig.jwt_secret , {expiresIn: "7d"})
-   console.log(UserToken)
-
-   return dbResult
+    const token = jwt.sign({name:currentUser.name , email , role:currentUser.role }, envConfig.jwt_secret , {expiresIn: "7d"})
+    return {token , data:dbResult.rows[0]}
 }
 
 export const AuthService = {
