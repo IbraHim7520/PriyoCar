@@ -25,17 +25,17 @@ createDatabase();
 app.use('/api/v1/auth/signup', userRouter); // user registration
 app.use("/api/v1/auth/signin", Authrouter) // user login
 
-//Vehicles routes-------------------------->
-app.use("/api/v1/vehicles", VehicleRouter); //post a vehicle
-app.use("/api/v1/vehicles", VehicleRouter) //get all vehicles
-app.use("/api/v1/vehicles", VehicleRouter) //Get a single vehicle
-app.use("/api/v1/vehicles", VehicleRouter)
+//*Vehicles routes-------------------------->
+app.use("/api/v1/vehicles", VehicleRouter); //!post a vehicle
+app.use("/api/v1/vehicles", VehicleRouter) //*get all vehicles
+app.use("/api/v1/vehicles", VehicleRouter) //?Get a single vehicle
+app.use("/api/v1/vehicles", VehicleRouter) //!delete a vehicle
 
 
-//users routes
-app.use("/api/v1/users", userRouter) //get all users
-app.use("/api/v1/users", userRouter) //update a user
-app.use("/api/v1/users/:userId", userRouter)
+//?users routes--------------------------------------->
+app.use("/api/v1/users", userRouter) //?get all users
+app.use("/api/v1/users", userRouter) //*update a user
+app.use("/api/v1/users", userRouter) //! delete a user
 
 
 

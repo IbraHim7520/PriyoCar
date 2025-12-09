@@ -37,12 +37,46 @@ const getAllusers = async(req:Request, res:Response) =>{
 }
 const updateUser = async(req:Request, res:Response) =>{
     const updatedValue = req.body;
+  
     const userid = req.params.userId as string
-    const updatedResult = await userService.updateAuser(parseInt(userid) , updatedValue)
+    
+        try {
+        const updatedResult = await userService.updateAuser(parseInt(userid) , updatedValue)
+            res.status(200).send({
+                success: true, 
+                message: "All User Updated successfully.",
+                data: updatedResult
+            })
+    } catch (error) {
+          res.status(201)
+        .send({
+            success: false,
+            message: "No User Found!"
+        })
+    }
+}
+
+const deleteUser = async(req:Request , res:Response) =>{
+    const id = parseInt(req.params.userId as string)
+    try {
+        const deletedUser = await userService.deleteuser(id);
+         res.status(200).send({
+                success: true, 
+                message: "User Deleted successfully.",
+                data: deletedUser
+        })
+    } catch (error:any) {
+        res.status(201)
+        .send({
+            success: false,
+            message: error.message || "No User Found!"
+        })
+    }
 }
 
 export const userControllers ={
     registerUser,
     getAllusers,
-    updateUser
+    updateUser,
+    deleteUser
 };

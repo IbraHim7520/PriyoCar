@@ -25,16 +25,29 @@ interface IuserInfo {
     role?:string
 }
 const updateAuser = async(userid:number , userInfo:IuserInfo) =>{
-    const userinfokeys:string[] = Object.keys(userInfo)
-    const userinfoValues:string[] = Object.values(userInfo)
-
-    console.log(userInfo)
+    const {name , email , phone, role="users" } = userInfo
+    const updateUser = await pool.query(`
+        UPDATE Users SET name = $1, email =$2 , phone = $3 , role = $4 WHERE id=$5 RETURNING id, name , email , phone , role`,
+        [name , email ,  phone , role, userid])
+    
+    return updateUser.rows[0]
+}
+const deleteuser = async(id:number) =>{
+    if(!id){
+        throw new Error("Invalid Id!");
+    }
+    const deleteQuery = pool.query(
+        `DELETE FROM Users WHERE id = $1 RETURNING name , email, phone, role`,
+        [id]
+    );
+    return (await deleteQuery).rows[0]
 }
 
 export const userService = {
     postUser,
     getAllUsers,
-    updateAuser
+    updateAuser,
+    deleteuser
     
     
 }
