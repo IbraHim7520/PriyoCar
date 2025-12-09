@@ -8,5 +8,6 @@ const VehicleRouter = express.Router();
     VehicleRouter.get("/", vehicleControllers.getVehicles)
     VehicleRouter.get("/:vehicleId", vehicleControllers.getSingleVehicle)
     VehicleRouter.delete("/:vehicleId", vehicleControllers.deleteAVegicle)
+    VehicleRouter.put("/:vehicleId", vehicleControllers.updateAVehicle )
 
 export default VehicleRouter

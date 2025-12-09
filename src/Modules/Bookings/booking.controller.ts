@@ -37,7 +37,21 @@ const controlGetAllBooking = async(req:Request , res:Response)=>{
 }
 const controlUpdateBooking = async(req:Request  , res:Response )=>{
     const bookingId = req.params.bookingId as string
-    const updateResponse = await bookingService.updateABooking(parseInt(bookingId))
+    const updateDetails = req.body
+    try {
+        const updateResponse = await bookingService.updateABooking(parseInt(bookingId), updateDetails)
+        res.status(200).send({
+            success:true,
+            message:"Booking Canceled successfully!",
+            data:updateResponse
+        })
+    } catch (error:any) {
+        res.status(201)
+        .send({
+            success:false,
+            message:error.message || "Wrong!"
+        })
+    }
 }
 export const bookingController ={
 controlPostBooking,

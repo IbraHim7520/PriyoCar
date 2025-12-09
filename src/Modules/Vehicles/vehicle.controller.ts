@@ -76,9 +76,30 @@ const deleteAVegicle = async(req:Request, res:Response)=>{
         })
     }
 }
+
+
+const updateAVehicle = async(req:Request , res:Response)=>{
+    const id = req.params.vehicleId as string
+    const updatedData = req.body
+    try {
+        const updatedResponse = await VehicleService.updateVehicle(parseInt(id) , updatedData);
+        res.status(200).send({
+            success:true,
+            message:"Vehicle updated successfully!",
+            data:updatedResponse
+        })
+    } catch (error:any) {
+            res.status(201).send({
+            success:false,
+            message:"failed to update Vehicle!",
+            data:[]
+        })
+    }
+}
 export const vehicleControllers ={
     uploadVehicle,
     getVehicles,
     getSingleVehicle,
-    deleteAVegicle
+    deleteAVegicle,
+    updateAVehicle
 }

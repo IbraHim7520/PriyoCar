@@ -57,9 +57,77 @@ const getAllBookings = async() =>{
     }
 }
 
-const updateABooking = async(id:number) =>{
-    
-}
+const updateABooking = async (id: number, payload: Record<string, any>) => {
+    const { status } = payload;
+
+    try {
+        const bookingData = await pool.query(
+            `SELECT * FROM Bookings WHERE id = $1`,
+            [id]
+        );
+
+        if (bookingData.rows.length === 0) {
+            throw new Error("Booking not found!");
+        }
+
+        const { vehicle_id, rent_start_date, rent_end_date } = bookingData.rows[0];
+
+        const startDate = new Date(rent_start_date);
+        const endDate = new Date(rent_end_date);
+        const currentDate = new Date();
+
+        // Compare only date part
+        startDate.setHours(0, 0, 0, 0);
+        endDate.setHours(0, 0, 0, 0);
+        currentDate.setHours(0, 0, 0, 0);
+
+        // CUSTOMER CANCEL LOGIC
+        if (status === "cancelled") {
+            if (currentDate >= startDate) {
+                throw new Error("Cannot cancel after start date!");
+            }
+
+            const updatedBooking = await pool.query(
+                `UPDATE Bookings SET status = $1 WHERE id = $2 RETURNING *`,
+                ["cancelled", id]
+            );
+
+            await pool.query(
+                `UPDATE Vehicles SET availability_status = $1 WHERE id = $2`,
+                ["available", vehicle_id]
+            );
+
+            return updatedBooking.rows[0];
+        }
+
+        // ADMIN RETURN LOGIC
+        if (status === "returned") {
+            if (currentDate < endDate) {
+                throw new Error("Cannot mark returned before end date!");
+            }
+
+            const updatedBooking = await pool.query(
+                `UPDATE Bookings SET status = $1 WHERE id = $2 RETURNING *`,
+                ["returned", id]
+            );
+
+            await pool.query(
+                `UPDATE Vehicles SET availability_status = $1 WHERE id = $2`,
+                ["available", vehicle_id]
+            );
+
+            return updatedBooking.rows[0];
+        }
+
+        // INVALID STATUS
+        throw new Error("Invalid status instruction!");
+
+    } catch (error) {
+        throw error; // return clean error
+    }
+};
+
+
 export const bookingService = {
     postBooking,
     getAllBookings,

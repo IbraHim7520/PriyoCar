@@ -28,15 +28,34 @@ const deleteVehicle = async(id:number)=>{
     return deleteResult
 }
 
-// const updateVehicle = async(keyField:string[], valueField:string[])=>{
-//     console.log(keyField)
-//     console.log(valueField)
-// }
+const updateVehicle = async(id:number , payload:Record<string, any>)=>{
+  const { vehicle_name, type, registration_number, daily_rent_price, availability_status } = payload;
+  const result = await pool.query(
+    `
+    UPDATE Vehicles
+    SET vehicle_name = $1,
+        type = $2,
+        registration_number = $3,
+        daily_rent_price = $4,
+        availability_status = $5
+    WHERE id = $6
+    RETURNING *;
+    `,
+    [vehicle_name, type, registration_number, daily_rent_price, availability_status, id]
+  );
+
+  if (result.rows.length === 0) {
+    throw new Error("Vehicle not found or update failed");
+  }
+
+  return result.rows[0];
+}
 
 
 export const VehicleService = {
     uploadVehicle,
     getAllVehicles,
     getSingleVehicle,
-    deleteVehicle
+    deleteVehicle,
+    updateVehicle
 }

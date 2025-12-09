@@ -31,6 +31,7 @@ app.use("/api/v1/vehicles", VehicleRouter); //!post a vehicle
 app.use("/api/v1/vehicles", VehicleRouter) //*get all vehicles
 app.use("/api/v1/vehicles", VehicleRouter) //?Get a single vehicle
 app.use("/api/v1/vehicles", VehicleRouter) //!delete a vehicle
+app.use("/api/v1/vehicles/", VehicleRouter) //*Update a vehicle
 
 
 //?users routes--------------------------------------->
