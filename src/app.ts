@@ -4,6 +4,7 @@ import userRouter from "./Modules/Users/user.routes";
 import { createDatabase } from "./Configs/dbconfig";
 import Authrouter from "./Modules/Auth/auth.routes";
 import VehicleRouter from "./Modules/Vehicles/vehicle.routes";
+import bookingRouter from "./Modules/Bookings/booking.routes";
 
 const app = express();
 app.use(express.json());
@@ -37,6 +38,11 @@ app.use("/api/v1/users", userRouter) //?get all users
 app.use("/api/v1/users", userRouter) //*update a user
 app.use("/api/v1/users", userRouter) //! delete a user
 
+
+//!Bookings routes -------------------------------------->
+app.use("/api/v1/bookings",bookingRouter) //? post a booking
+app.use("/api/v1/bookings", bookingRouter) //! get all bookings
+app.use("/api/v1/bookings", bookingRouter) //* update a booking
 
 
 export default app;
