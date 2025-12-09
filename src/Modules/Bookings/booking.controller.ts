@@ -19,8 +19,9 @@ const controlPostBooking = async(req:Request, res:Response)=>{
     }
 }
 const controlGetAllBooking = async(req:Request , res:Response)=>{
+    const userinfo = req.user
     try {
-        const allBookings = await bookingService.getAllBookings();
+        const allBookings = await bookingService.getAllBookings(userinfo);
         res.status(200)
         .send({
             success:true,
@@ -38,8 +39,9 @@ const controlGetAllBooking = async(req:Request , res:Response)=>{
 const controlUpdateBooking = async(req:Request  , res:Response )=>{
     const bookingId = req.params.bookingId as string
     const updateDetails = req.body
+    const user = req.user
     try {
-        const updateResponse = await bookingService.updateABooking(parseInt(bookingId), updateDetails)
+        const updateResponse = await bookingService.updateABooking(parseInt(bookingId), updateDetails , user)
         res.status(200).send({
             success:true,
             message:"Booking Canceled successfully!",

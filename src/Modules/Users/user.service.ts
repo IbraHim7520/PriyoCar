@@ -26,14 +26,40 @@ interface IuserInfo {
     phone?:string,
     role?:string
 }
-const updateAuser = async(userid:number , userInfo:IuserInfo) =>{
-    const {name , email , phone, role="users" } = userInfo
-    const updateUser = await pool.query(`
-        UPDATE Users SET name = $1, email =$2 , phone = $3 , role = $4 WHERE id=$5 RETURNING id, name , email , phone , role`,
-        [name , email ,  phone , role, userid])
-    
-    return updateUser.rows[0]
-}
+const updateAuser = async (
+    userid: number,
+    userInfo: IuserInfo,
+    loggedinUser: Record<string, any>
+) => {
+    const { name, email, phone, role } = userInfo;
+    if (loggedinUser.role === "admin") {
+
+        const updateUser = await pool.query(
+            `UPDATE Users 
+             SET name = $1, email = $2, phone = $3, role = $4 
+             WHERE id = $5 
+             RETURNING id, name, email, phone, role`,
+            [name, email, phone, role, userid]
+        );
+
+        return updateUser.rows[0];
+    }
+    if (loggedinUser.role === "user") {
+
+        const updateUser = await pool.query(
+            `UPDATE Users 
+             SET name = $1, email = $2, phone = $3 
+             WHERE email = $4 
+             RETURNING id, name, email, phone, role`,
+            [name, email, phone, loggedinUser.email]
+        );
+
+        return updateUser.rows[0];
+    }
+
+    return null;
+};
+
 const deleteuser = async(id:number) =>{
     if(!id){
         throw new Error("Invalid Id!");

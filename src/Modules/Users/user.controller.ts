@@ -37,11 +37,11 @@ const getAllusers = async(req:Request, res:Response) =>{
 }
 const updateUser = async(req:Request, res:Response) =>{
     const updatedValue = req.body;
-  
+    const user = req.user
     const userid = req.params.userId as string
     
         try {
-        const updatedResult = await userService.updateAuser(parseInt(userid) , updatedValue)
+        const updatedResult = await userService.updateAuser(parseInt(userid) , updatedValue, user)
             res.status(200).send({
                 success: true, 
                 message: "All User Updated successfully.",

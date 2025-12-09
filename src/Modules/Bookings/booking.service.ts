@@ -48,18 +48,27 @@ const postBooking = async (payload: Record<string, any>) => {
 
 };
 
-const getAllBookings = async() =>{
+const getAllBookings = async(payload:Record<string, any>) =>{
+    const {email , role} = payload
     try {
-        const allBookings = await pool.query(`SELECT * FROM Bookings`);
-        return allBookings.rows
+        if(role==="admin"){
+            const allBookings = await pool.query(`SELECT * FROM Bookings`);
+            return allBookings.rows
+        }else{
+            const allusers = await pool.query(`SELECT id FROM Users WHERE email = $1`,[email]);
+            const id = allusers.rows[0].id;
+            const allBookings = await pool.query(`SELECT * FROM Bookings WHERE customer_id = $1`, [id]);
+            return allBookings.rows
+        }
+        
     } catch (error) {
         throw new Error("Failed to retrive data!")
     }
 }
 
-const updateABooking = async (id: number, payload: Record<string, any>) => {
+const updateABooking = async (id: number, payload: Record<string, any> , user:Record<string, any>) => {
     const { status } = payload;
-
+    const {email , role} = user
     try {
         const bookingData = await pool.query(
             `SELECT * FROM Bookings WHERE id = $1`,
@@ -82,7 +91,7 @@ const updateABooking = async (id: number, payload: Record<string, any>) => {
         currentDate.setHours(0, 0, 0, 0);
 
         // CUSTOMER CANCEL LOGIC
-        if (status === "cancelled") {
+        if (status === "cancelled" && role === "user" ) {
             if (currentDate >= startDate) {
                 throw new Error("Cannot cancel after start date!");
             }
@@ -98,10 +107,8 @@ const updateABooking = async (id: number, payload: Record<string, any>) => {
             );
 
             return updatedBooking.rows[0];
-        }
-
-        // ADMIN RETURN LOGIC
-        if (status === "returned") {
+        
+         }else if (status === "returned" && role === "admin") {
             if (currentDate < endDate) {
                 throw new Error("Cannot mark returned before end date!");
             }
@@ -118,7 +125,6 @@ const updateABooking = async (id: number, payload: Record<string, any>) => {
 
             return updatedBooking.rows[0];
         }
-
         // INVALID STATUS
         throw new Error("Invalid status instruction!");
 
